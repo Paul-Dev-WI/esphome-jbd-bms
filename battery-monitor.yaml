@@ -1,0 +1,297 @@
+substitutions:
+  name: battery-monitor
+  bms0: "${name} bms0"
+  bms1: "${name} bms1"
+  bms2: "${name} bms2"
+  bms3: "${name} bms3"
+  device_description: "Monitor and control a Xiaoxiang Battery Management System (JBD-BMS) via BLE"
+  external_components_source: github://syssi/esphome-jbd-bms@main
+  bms0_mac_address: A5:C2:37:16:23:68
+  bms1_mac_address: A5:C2:37:27:51:5E
+  bms2_mac_address: A5:C2:37:2B:2B:7C
+  bms3_mac_address: A5:C2:37:2B:18:7E
+
+esphome:
+  name: ${name}
+  friendly_name: Battery Monitor  
+  comment: ${device_description}
+  min_version: 2024.6.0
+  project:
+    name: "syssi.esphome-jbd-bms"
+    version: 2.1.0
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+external_components:
+  - source: ${external_components_source}
+    refresh: 0s
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+ota:
+  platform: esphome
+  password: "0e93d4ecea942e6fe8de45090263fb45"
+
+logger:
+  level: DEBUG
+
+# If you use Home Assistant please remove this `mqtt` section and uncomment the `api` component!
+# The native API has many advantages over MQTT: https://esphome.io/components/api.html#advantages-over-mqtt
+#mqtt:
+#  broker: !secret mqtt_host
+#  username: !secret mqtt_username
+#  password: !secret mqtt_password
+#  id: mqtt_client
+
+api:
+  encryption:
+    key: "jvcAwJnlceXyXnzwBtMXnueEWylKVfYUfEKU9hxk5WA="
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+
+ble_client:
+  - mac_address: ${bms0_mac_address}
+    id: client0
+  - mac_address: ${bms1_mac_address}
+    id: client1
+  - mac_address: ${bms2_mac_address}
+    id: client2
+  - mac_address: ${bms3_mac_address}
+    id: client3
+
+jbd_bms_ble:
+  - id: bms0
+    ble_client_id: client0
+    update_interval: 5min
+  - id: bms1
+    ble_client_id: client1
+    update_interval: 5min
+  - id: bms2
+    ble_client_id: client2
+    update_interval: 5min
+  - id: bms3
+    ble_client_id: client3
+    update_interval: 5min
+
+binary_sensor:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    balancing:
+      name: "${bms0} balancing"
+    charging:
+      name: "${bms0} charging"
+    discharging:
+      name: "${bms0} discharging"
+    online_status:
+      name: "${bms0} online status"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    balancing:
+      name: "${bms1} balancing"
+    charging:
+      name: "${bms1} charging"
+    discharging:
+      name: "${bms1} discharging"
+    online_status:
+      name: "${bms1} online status"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms2
+    balancing:
+      name: "${bms2} balancing"
+    charging:
+      name: "${bms2} charging"
+    discharging:
+      name: "${bms2} discharging"
+    online_status:
+      name: "${bms2} online status"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms3 
+    balancing:
+      name: "${bms3} balancing"
+    charging:
+      name: "${bms3} charging"
+    discharging:
+      name: "${bms3} discharging"
+    online_status:
+      name: "${bms3} online status"
+
+sensor:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    power:
+      name: "${bms0} power"
+    state_of_charge:
+      name: "${bms0} state of charge"
+    total_voltage:
+      name: "${bms0} total voltage"
+    average_cell_voltage:
+      name: "${bms0} average cell voltage"
+    delta_cell_voltage:
+      name: "${bms0} delta cell voltage"
+    nominal_capacity:
+      name: "${bms0} nominal capacity"
+    charging_cycles:
+      name: "${bms0} charging cycles"
+    capacity_remaining:
+      name: "${bms0} capacity remaining"
+    battery_cycle_capacity:
+      name: "${bms0} battery cycle capacity"
+    # ...
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    power:
+      name: "${bms1} power"
+    state_of_charge:
+      name: "${bms1} state of charge"
+    total_voltage:
+      name: "${bms1} total voltage"
+    average_cell_voltage:
+      name: "${bms1} average cell voltage"
+    delta_cell_voltage:
+      name: "${bms1} delta cell voltage"
+    nominal_capacity:
+      name: "${bms1} nominal capacity"
+    charging_cycles:
+      name: "${bms1} charging cycles"
+    capacity_remaining:
+      name: "${bms1} capacity remaining"
+    battery_cycle_capacity:
+      name: "${bms1} battery cycle capacity"      
+    # ...
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms2
+    power:
+      name: "${bms2} power"
+    state_of_charge:
+      name: "${bms2} state of charge"
+    total_voltage:
+      name: "${bms2} total voltage"
+    average_cell_voltage:
+      name: "${bms2} average cell voltage"
+    delta_cell_voltage:
+      name: "${bms2} delta cell voltage"
+    nominal_capacity:
+      name: "${bms2} nominal capacity"
+    charging_cycles:
+      name: "${bms2} charging cycles"
+    capacity_remaining:
+      name: "${bms2} capacity remaining"
+    battery_cycle_capacity:
+      name: "${bms2} battery cycle capacity"      
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms3
+    power:
+      name: "${bms3} power"
+    state_of_charge:
+      name: "${bms3} state of charge"
+    total_voltage:
+      name: "${bms3} total voltage"
+    average_cell_voltage:
+      name: "${bms3} average cell voltage"
+    delta_cell_voltage:
+      name: "${bms3} delta cell voltage"
+    nominal_capacity:
+      name: "${bms3} nominal capacity"
+    charging_cycles:
+      name: "${bms3} charging cycles"
+    capacity_remaining:
+      name: "${bms3} capacity remaining"
+    battery_cycle_capacity:
+      name: "${bms3} battery cycle capacity"
+    # ...
+text_sensor:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    errors:
+      name: "${bms0} errors"
+    operation_status:
+      name: "${bms0} operation status"
+    device_model:
+      name: "${bms0} device model"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    errors:
+      name: "${bms1} errors"
+    operation_status:
+      name: "${bms1} operation status"
+    device_model:
+      name: "${bms1} device model"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms2
+    errors:
+      name: "${bms2} errors"
+    operation_status:
+      name: "${bms2} operation status"
+    device_model:
+      name: "${bms2} device model"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms3
+    errors:
+      name: "${bms3} errors"
+    operation_status:
+      name: "${bms3} operation status"
+    device_model:
+      name: "${bms3} device model"
+
+select:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    read_eeprom_register:
+      name: "${bms0} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    read_eeprom_register:
+      name: "${bms1} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms2
+    read_eeprom_register:
+      name: "${bms2} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms3
+    read_eeprom_register:
+      name: "${bms3} read eeprom register"
+      optionsmap:
+        0xAA: "Error Counts"
+
+button:
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms0
+    retrieve_hardware_version:
+      name: "${bms0} retrieve hardware version"
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms1
+    retrieve_hardware_version:
+      name: "${bms1} retrieve hardware version"
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms2
+    retrieve_hardware_version:
+      name: "${bms2} retrieve hardware version"
+  - platform: jbd_bms_ble
+    jbd_bms_ble_id: bms3
+    retrieve_hardware_version:
+      name: "${bms3} retrieve hardware version"
